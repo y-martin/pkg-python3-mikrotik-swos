@@ -1,0 +1,25 @@
+---
+
+default:
+  image: debian:11
+
+  before_script:
+    - source /etc/os-release
+    - echo "deb http://ftp.debian.org/debian/ ${VERSION_CODENAME} main contrib non-free" > /etc/apt/sources.list
+    - echo "deb http://ftp.debian.org/debian/ ${VERSION_CODENAME}-updates main contrib non-free" >> /etc/apt/sources.list
+    - echo "deb http://ftp.debian.org/debian ${VERSION_CODENAME}-backports main contrib non-free" >> /etc/apt/sources.list
+    - echo "deb http://security.debian.org/debian-security ${VERSION_CODENAME}-security main contrib non-free" >> /etc/apt/sources.list
+    - apt-get update
+    - apt-get dist-upgrade -y
+    - apt-get install -y gcc binutils bzip2 flex perl make grep unzip gawk libz-dev wget findutils diffutils xz-utils patch bison lsb-release devscripts bc rsync kmod cpio libelf-dev libssl-dev firmware-atheros equivs curl
+    - mkdir public
+
+pages:
+  script:
+    - ./pkgme.sh
+    - mv ../*.deb public
+    - cd public
+    - ls *.deb > release
+  artifacts:
+    paths:
+      - public
