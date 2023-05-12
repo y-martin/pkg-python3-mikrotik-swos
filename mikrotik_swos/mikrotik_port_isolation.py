@@ -34,8 +34,11 @@ class Mikrotik_Forwarding(Swostab):
     def _load_tab_data(self):
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
 
-    def port_isolation(self, port_id, port_list):
+    def port_isolation(self, port_id, port_list = []):
         if port_id < 1 or port_id > self.port_count:
+            return False
+
+        if port_list is None:
             return False
 
         if isinstance(port_list, str) and port_list == 'any':
