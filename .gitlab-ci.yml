@@ -5,7 +5,7 @@
   stage: build
   image: 4tbvr34jtc2pp6/debian-package:${DEB_VERSION}
   script:
-    - test -f debian/changelog && sed -i -E "s/(^[a-z]+.*)([0-9])\)(.+)/\1\2+deb12)\3/" debian/changelog
+    - test -f debian/changelog && sed -i -E "s/(^[a-z]+.*)([0-9])\)(.+)/\1\2+deb${DEB_VERSION})\3/" debian/changelog
     - ./pkgme.sh
     - rm -f ../*dbg*.deb
     - mkdir -p public/deb${DEB_VERSION}
