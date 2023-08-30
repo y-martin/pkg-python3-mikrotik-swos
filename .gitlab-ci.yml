@@ -1,36 +1,4 @@
 ---
 
-
-.build-debX: &build-debX
-  stage: build
-  image: 4tbvr34jtc2pp6/debian-package:${DEB_VERSION}
-  script:
-    - test -f debian/changelog && sed -i -E "s/(^[a-z]+.*)([0-9])\)(.+)/\1\2+deb${DEB_VERSION})\3/" debian/changelog
-    - ./pkgme.sh
-    - rm -f ../*dbg*.deb
-    - mkdir -p public/deb${DEB_VERSION}
-    - cd public/deb${DEB_VERSION}
-    - mv ../../../*.deb .
-    - ls *.deb > release
-  artifacts:
-    paths:
-      - public
-
-
-build-deb11:
-  variables:
-    DEB_VERSION: 11
-  <<: *build-debX
-
-build-deb12:
-  variables:
-    DEB_VERSION: 12
-  <<: *build-debX
-
-pages:
-  stage: deploy
-  script:
-    - ls -l public
-  artifacts:
-    paths:
-      - public
+include:
+  - 'https://framagit.org/okazoo-public/gitlabci/-/raw/master/pkg-gitlab-ci.yml'
