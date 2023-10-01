@@ -17,6 +17,7 @@ class Mikrotik_Vlans(Swostab):
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
         for i in self._data:
             self._parsed_data[int(i['vid'], 16)] = {
+                "idx": i,
                 "nm": utils.decode_string(i["nm"]),
                 "piso": utils.decode_checkbox(i["piso"]),
                 "lrn": utils.decode_checkbox(i["lrn"]),
@@ -55,8 +56,9 @@ class Mikrotik_Vlans(Swostab):
                 "lrn": True,
                 "mrr": False,
                 "igmp": False,
-                "mbr": utils.encode_listofflags([0] * self.port_count, 8)
+                "mbr": [0] * self.port_count,
             }
+            self._data.append(_vlan_config)
             self._parsed_data[vlan_id] = _vlan_config
 
         _vlan_config["piso"] = kwargs.get("port_isolation", None)
@@ -66,7 +68,9 @@ class Mikrotik_Vlans(Swostab):
 
 
     def remove(self, vlan_id):
-        if self._parsed_data.pop(vlan_id, None):
+        vlan = self._parsed_data.pop(vlan_id, None)
+        if vlan:
+            self._data.remove(vlan["idx"])
             self._data_changed = True
             return True
 

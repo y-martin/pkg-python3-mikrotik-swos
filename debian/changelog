@@ -1,3 +1,9 @@
+python3-mikrotik-swos (0.3-1) stable; urgency=medium
+
+  * fix vlan add/remove
+
+ -- Yannick Martin <yannick.martin@okazoo.eu>  Sun, 01 Oct 2023 16:27:03 +0200
+
 python3-mikrotik-swos (0.2-1) stable; urgency=medium
 
   * fix port_isolation setting
