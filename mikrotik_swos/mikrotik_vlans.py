@@ -51,7 +51,7 @@ class Mikrotik_Vlans(Swostab):
         if _vlan_config is None:
             _vlan_config = {
                 "vid": utils.hex_str_with_pad(vlan_id, pad=4),
-                "nm": str(vlan_id),
+                "nm": "",
                 "piso": True,
                 "lrn": True,
                 "mrr": False,
@@ -61,10 +61,12 @@ class Mikrotik_Vlans(Swostab):
             self._data.append(_vlan_config)
             self._parsed_data[vlan_id] = _vlan_config
 
+        _vlan_config["nm"] = kwargs.get("name", str(vlan_id))
         _vlan_config["piso"] = kwargs.get("port_isolation", None)
         _vlan_config["lrn"] = kwargs.get("learning", None)
         _vlan_config["mrr"] = kwargs.get("mirror", None)
         _vlan_config["igmp"] = kwargs.get("igmp_snooping", None)
+        
 
 
     def remove(self, vlan_id):
