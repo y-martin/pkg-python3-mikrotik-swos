@@ -11,6 +11,7 @@ class Swostab:
 
     def _post(self, page, data):
         return requests.post(self._url + page, auth=self._auth, data=data)
+
     def _update_data(self, field, value = None, field_index = None):
         if value is None:
             return
@@ -37,7 +38,15 @@ class Swostab:
 
         # required to decode some list of boxes
         _link = utils.mikrotik_to_json(resp.text)
-        self.port_count = len(_link["nm"])
+        self.port_count = int(_link["prt"], 16)
+
+        # some feature appears in 2.16
+        resp = self._get("/sys.b")
+        assert(resp.status_code == 200)
+
+        # required to decode some list of boxes
+        _sys = utils.mikrotik_to_json(resp.text)
+        self.version = float(utils.decode_string(_sys["ver"]))
 
         self._load_tab_data()
         self._data_changed = False

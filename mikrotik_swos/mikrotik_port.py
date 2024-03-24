@@ -10,6 +10,17 @@ from mikrotik_swos.swostab import Swostab
 PAGE = "/link.b"
 
 
+# todo
+# * sfprate => sfpr 0x01 (high) / 0x00 (low)
+# * spdc    => 10mb (0x00) / 100 (0x01) / 1000 (0x02) / 10 (0x05) / 2.5 (0x03)
+#   10mb (rj only) / 2.5 and 10 (sfp only)
+#
+# notes
+# sfpo 0x18 => 24 (first sfp index ?)
+# sfp 0x2 => 2 (sfp count)
+# prt 0x1a => 26 (port count)
+
+
 class Mikrotik_Port(Swostab):
     def _load_tab_data(self):
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
