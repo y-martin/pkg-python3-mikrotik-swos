@@ -21,7 +21,7 @@ class Mikrotik_Lacp(Swostab):
     def _load_tab_data(self):
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
 
-    def port_lacp_mode(self, port_id, mode):
+    def port_lacp_mode(self, port_id, mode, group_id=None):
         if mode not in LAG_MODE:
             return False
 
@@ -29,6 +29,9 @@ class Mikrotik_Lacp(Swostab):
             return False
 
         _mode = LAG_MODE[mode]
+        if mode == "static" and group_id:
+            self._update_data("sgrp", utils.hex_str_with_pad(group_id, pad=2), port_id-1)
+        
         self._update_data("mode", _mode, port_id-1)
         return True
 

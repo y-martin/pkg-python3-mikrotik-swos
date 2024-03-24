@@ -37,6 +37,9 @@ class Mikrotik_Port(Swostab):
             self.parsed_data["name"].append(utils.decode_string(self._data["nm"][i]))
 
     def configure(self, port_id, **kwargs):
+        if port_id < 1 or port_id > self.port_count:
+            return
+
         self.parsed_data["name"][port_id-1] = kwargs.get("name", None)
         self.parsed_data["enabled"][port_id-1] = 1 if kwargs.get("enabled", 0) else 0
         self.parsed_data["autoneg"][port_id-1] = 1 if kwargs.get("autoneg", 1) else 0
