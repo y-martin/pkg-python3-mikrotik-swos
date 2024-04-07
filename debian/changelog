@@ -1,3 +1,9 @@
+python3-mikrotik-swos (0.9-1) stable; urgency=medium
+
+  * manage port speed and sfp rate
+
+ --  <yannick.martin@okazoo.eu>  Sun, 07 Apr 2024 14:22:26 +0200
+
 python3-mikrotik-swos (0.8-1) stable; urgency=medium
 
   * fix rstp port management

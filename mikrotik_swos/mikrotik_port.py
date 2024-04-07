@@ -10,22 +10,31 @@ from mikrotik_swos.swostab import Swostab
 PAGE = "/link.b"
 
 
-# todo
-# * sfprate => sfpr 0x01 (high) / 0x00 (low)
-# * spdc    => 10mb (0x00) / 100 (0x01) / 1000 (0x02) / 10 (0x05) / 2.5 (0x03)
-#   10mb (rj only) / 2.5 and 10 (sfp only)
-#
 # notes
 # sfpo 0x18 => 24 (first sfp index ?)
 # sfp 0x2 => 2 (sfp count)
 # prt 0x1a => 26 (port count)
 
 
+PORT_SPEED_MB = {
+    "10": "0x00",
+    "100": "0x01",
+    "1000": "0x02",
+    "2500": "0x03",
+    "10000": "0x05"
+}
+
+PORT_SFP_RATE = {
+    "low": "0x00",
+    "high": "0x01"
+}
+
 class Mikrotik_Port(Swostab):
     def _load_tab_data(self):
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
         self.parsed_data = {
-            "name": []
+            "name": [],
+            "speed": [],
         }
 
         self.parsed_data["enabled"] = utils.decode_listofflags(self._data["en"], self.port_count)
@@ -33,8 +42,12 @@ class Mikrotik_Port(Swostab):
         self.parsed_data["tx_flow_control"] = utils.decode_listofflags(self._data["fctc"], self.port_count)
         self.parsed_data["rx_flow_control"] = utils.decode_listofflags(self._data["fctr"], self.port_count)
         self.parsed_data["autoneg"] = utils.decode_listofflags(self._data["an"], self.port_count)
+        self.parsed_data["speed"] = self._data["spdc"]
         for i in range(0, self.port_count):
             self.parsed_data["name"].append(utils.decode_string(self._data["nm"][i]))
+            
+        if self.version >= 2.16:
+            self.parsed_data["spf_rate"] = self._data["sfpr"]
 
     def configure(self, port_id, **kwargs):
         if port_id < 1 or port_id > self.port_count:
@@ -46,6 +59,11 @@ class Mikrotik_Port(Swostab):
         self.parsed_data["duplex"][port_id-1] = 1 if kwargs.get("duplex", 1) else 0
         self.parsed_data["tx_flow_control"][port_id-1] = 1 if kwargs.get("tx_flow_control", 0) else 0
         self.parsed_data["rx_flow_control"][port_id-1] = 1 if kwargs.get("rx_flow_control", 0) else 0
+        if kwargs.get("autoneg", 1) == 0:
+            self.parsed_data["speed"][port_id-1] = PORT_SPEED_MB[kwargs.get("speed", "1000")]
+
+        if self.version >= 2.16:
+            self.parsed_data["spf_rate"][port_id-1] = PORT_SFP_RATE[kwargs.get("sfp_rate", "low")]
 
     def save(self):
         self._update_data("en", utils.encode_listofflags(self.parsed_data["enabled"], 8))
@@ -55,16 +73,24 @@ class Mikrotik_Port(Swostab):
         self._update_data("an", utils.encode_listofflags(self.parsed_data["autoneg"], 8))
         for i in range(0, self.port_count):
             self._update_data("nm", utils.encode_string(self.parsed_data["name"][i]), i)
+            self._update_data("speed", self.parsed_data["speed"][i], i)
+
+        if self.version >= 2.16:
+            for i in range(0, self.port_count):
+                self._update_data("sfpr", self.parsed_data["sfp_rate"][i], i)
 
         return self._save(PAGE)
 
     def show(self):
+        port_speed_mb_str = {v: k for k, v in PORT_SPEED_MB.items()}
+        
         print("link tab")
         for i in range(0, self.port_count):
-            print("* {} enabled: {}, autoneg: {}, duplex: {}, ctrl tx: {}, ctrl rx: {}".format(
+            print("* {} enabled: {}, autoneg: {}, speed: {}mb/s, duplex: {}, ctrl tx: {}, ctrl rx: {}".format(
                 self.parsed_data["name"][i],
                 self.parsed_data["enabled"][i],
                 self.parsed_data["autoneg"][i],
+                port_speed_mb_str[self.parsed_data["speed"][i]],
                 self.parsed_data["duplex"][i],
                 self.parsed_data["tx_flow_control"][i],
                 self.parsed_data["rx_flow_control"][i],
