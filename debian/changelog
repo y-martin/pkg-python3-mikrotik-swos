@@ -1,3 +1,9 @@
+python3-mikrotik-swos (0.11-1) stable; urgency=medium
+
+  * fix port speed config
+
+ --  <yannick.martin@okazoo.eu>  Sun, 07 Apr 2024 14:32:31 +0200
+
 python3-mikrotik-swos (0.10-1) stable; urgency=medium
 
   * port config fixes

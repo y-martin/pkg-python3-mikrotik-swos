@@ -20,8 +20,8 @@ PORT_SPEED_MB = {
     "10": "0x00",
     "100": "0x01",
     "1000": "0x02",
-    "2500": "0x03",
-    "10000": "0x05"
+    "2500": "0x05",
+    "10000": "0x03"
 }
 
 PORT_SFP_RATE = {
@@ -60,7 +60,7 @@ class Mikrotik_Port(Swostab):
         self.parsed_data["tx_flow_control"][port_id-1] = 1 if kwargs.get("tx_flow_control", 0) else 0
         self.parsed_data["rx_flow_control"][port_id-1] = 1 if kwargs.get("rx_flow_control", 0) else 0
         if kwargs.get("autoneg", 1) == 0:
-            self.parsed_data["speed"][port_id-1] = PORT_SPEED_MB[kwargs.get("speed", "1000")]
+            self.parsed_data["speed"][port_id-1] = PORT_SPEED_MB.get(str(kwargs.get("speed", "1000")), "0x02")
 
         if self.version >= 2.16:
             self.parsed_data["sfp_rate"][port_id-1] = PORT_SFP_RATE[kwargs.get("sfp_rate", "low")]
