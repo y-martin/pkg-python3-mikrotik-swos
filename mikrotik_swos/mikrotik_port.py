@@ -42,12 +42,12 @@ class Mikrotik_Port(Swostab):
         self.parsed_data["tx_flow_control"] = utils.decode_listofflags(self._data["fctc"], self.port_count)
         self.parsed_data["rx_flow_control"] = utils.decode_listofflags(self._data["fctr"], self.port_count)
         self.parsed_data["autoneg"] = utils.decode_listofflags(self._data["an"], self.port_count)
-        self.parsed_data["speed"] = self._data["spdc"]
+        self.parsed_data["speed"] = self._data["spdc"].copy()
         for i in range(0, self.port_count):
             self.parsed_data["name"].append(utils.decode_string(self._data["nm"][i]))
             
         if self.version >= 2.16:
-            self.parsed_data["sfp_rate"] = self._data["sfpr"]
+            self.parsed_data["sfp_rate"] = self._data["sfpr"].copy()
 
     def configure(self, port_id, **kwargs):
         if port_id < 1 or port_id > self.port_count:
