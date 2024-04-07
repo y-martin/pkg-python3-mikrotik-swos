@@ -47,7 +47,7 @@ class Mikrotik_Port(Swostab):
             self.parsed_data["name"].append(utils.decode_string(self._data["nm"][i]))
             
         if self.version >= 2.16:
-            self.parsed_data["spf_rate"] = self._data["sfpr"]
+            self.parsed_data["sfp_rate"] = self._data["sfpr"]
 
     def configure(self, port_id, **kwargs):
         if port_id < 1 or port_id > self.port_count:
@@ -63,7 +63,7 @@ class Mikrotik_Port(Swostab):
             self.parsed_data["speed"][port_id-1] = PORT_SPEED_MB[kwargs.get("speed", "1000")]
 
         if self.version >= 2.16:
-            self.parsed_data["spf_rate"][port_id-1] = PORT_SFP_RATE[kwargs.get("sfp_rate", "low")]
+            self.parsed_data["sfp_rate"][port_id-1] = PORT_SFP_RATE[kwargs.get("sfp_rate", "low")]
 
     def save(self):
         self._update_data("en", utils.encode_listofflags(self.parsed_data["enabled"], 8))
@@ -73,7 +73,7 @@ class Mikrotik_Port(Swostab):
         self._update_data("an", utils.encode_listofflags(self.parsed_data["autoneg"], 8))
         for i in range(0, self.port_count):
             self._update_data("nm", utils.encode_string(self.parsed_data["name"][i]), i)
-            self._update_data("speed", self.parsed_data["speed"][i], i)
+            self._update_data("spdc", self.parsed_data["speed"][i], i)
 
         if self.version >= 2.16:
             for i in range(0, self.port_count):
