@@ -39,7 +39,6 @@ class Mikrotik_System(Swostab):
         self._update_data("ivl", utils.encode_checkbox(kwargs.get("independant_vlan_lookup", None)))
         self._update_data("igmp", utils.encode_checkbox(kwargs.get("igmp_snooping", None)))
         self._update_data("igfl", utils.encode_listofflags(kwargs.get("igmp_fast_leave", None), 8))
-        self._update_data("dsc", utils.encode_checkbox(kwargs.get("mikrotik_discovery_protocol", None)))
         self._update_data("dtrp", utils.encode_listofflags(kwargs.get("dhcp_trusted_port", None), 8))
         self._update_data("ainf", utils.encode_checkbox(kwargs.get("dhcp_add_information_option", None)))
         self._update_data("id", utils.encode_string(kwargs.get("identity", None)))
@@ -54,6 +53,12 @@ class Mikrotik_System(Swostab):
 
             # igmp version
             self._update_data("igve", IGMP_VERSION[kwargs.get("igmp_version", "v3")])
+
+        # 2.17 additions
+        if self.version >= 2.17:
+            self._update_data("pdsc", utils.encode_listofflags(kwargs.get("mikrotik_discovery_protocol", None), 8))
+        else:
+            self._update_data("dsc", utils.encode_checkbox(kwargs.get("mikrotik_discovery_protocol", None)))
         
         return self._save(PAGE)
 
@@ -70,14 +75,17 @@ class Mikrotik_System(Swostab):
         print("* independant vlan loookup {}" . format(utils.decode_checkbox(self._data["ivl"])))
         print("* igmp snooping {}" . format(utils.decode_checkbox(self._data["igmp"])))
         print("* igmp fast leave {}" . format(utils.decode_listofflags(self._data["igfl"], self.port_count)))
-        print("* mikrotik discovery protocol {}" . format(utils.decode_checkbox(self._data["dsc"])))
         print("* trusted port {}" . format(utils.decode_listofflags(self._data["dtrp"], self.port_count)))
         print("* add information option {}" . format(utils.decode_checkbox(self._data["ainf"])))
 
         if self.version >= 2.16:
             igmp_ver_str = {v: k for k, v in IGMP_VERSION.items()}
-            
             print("* igmp querier {}" . format(utils.decode_checkbox(self._data["igmq"])))
             print("* igmp version {}" . format(igmp_ver_str[self._data["igve"]]))
 
+        if self.version >= 2.17:
+            print("* mikrotik discovery protocol {}" . format(utils.decode_listofflags(self._data["pdsc"], self.port_count)))
+        else:
+            print("* mikrotik discovery protocol {}" . format(utils.decode_checkbox(self._data["dsc"])))
+            
         print("")
