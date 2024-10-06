@@ -56,7 +56,13 @@ class Mikrotik_System(Swostab):
 
         # 2.17 additions
         if self.version >= 2.17:
-            self._update_data("pdsc", utils.encode_listofflags(kwargs.get("mikrotik_discovery_protocol", None), 8))
+            discovery_protocol = kwargs.get("mikrotik_discovery_protocol", None)
+            if (isinstance(discovery_protocol, bool) and not discovery_protocol) or discovery_protocol == []:
+               discovery_protocol = [0] * self.port_count
+            if isinstance(discovery_protocol, bool) and discovery_protocol:
+               discovery_protocol = [1] * self.port_count
+
+            self._update_data("pdsc", utils.encode_listofflags(discovery_protocol, 8))
         else:
             self._update_data("dsc", utils.encode_checkbox(kwargs.get("mikrotik_discovery_protocol", None)))
         
