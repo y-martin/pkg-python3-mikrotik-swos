@@ -31,6 +31,9 @@ class Mikrotik_Vlans(Swostab):
     def get(self, vlan_id):
         return self._parsed_data.get(vlan_id, None)
 
+    def get_vlans(self):
+        return list(self._parsed_data)
+
     def reset_member_cfg(self):
         for vlan in self._parsed_data:
             self._parsed_data[vlan]["mbr"] = [0] * self.port_count
@@ -67,8 +70,6 @@ class Mikrotik_Vlans(Swostab):
         _vlan_config["mrr"] = kwargs.get("mirror", None)
         _vlan_config["igmp"] = kwargs.get("igmp_snooping", None)
         
-
-
     def remove(self, vlan_id):
         vlan = self._parsed_data.pop(vlan_id, None)
         if vlan:
