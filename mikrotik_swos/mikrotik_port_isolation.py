@@ -36,7 +36,7 @@ class Mikrotik_Forwarding(Swostab):
 
     def port_isolation(self, port_id, port_list = []):
         if port_id < 1 or port_id > self.port_count:
-            return False
+            raise ValueError(f"port_id is outside 1..{self.port_count}")
 
         if port_list is None:
             return False
@@ -55,7 +55,7 @@ class Mikrotik_Forwarding(Swostab):
 
     def port_vlan_config(self, port_id, mode = None, receive_mode = None, default_vlan_id = None, force_vlan_id = None):
         if port_id < 1 or port_id > self.port_count:
-            return False
+            raise ValueError(f"port_id is outside 1..{self.port_count}")
 
         if mode is not None:
             _mode = VLAN_MODE[mode]
@@ -91,7 +91,7 @@ class Mikrotik_Forwarding(Swostab):
 
         print(self._data["fvid"])
         _fvid = utils.decode_listofflags(self._data["fvid"], self.port_count)
-        for i in range(1, self.port_count):
+        for i in range(0, self.port_count):
             # indexed fpX
             print("port {}:".format(i))
             print("  isolation table: {}".format(utils.decode_listofflags(self._data["fp{}".format(i)], self.port_count)))

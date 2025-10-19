@@ -29,6 +29,8 @@ PORT_SFP_RATE = {
     "high": "0x01"
 }
 
+PORT_NAME_LENGTH_MAX = 16
+
 class Mikrotik_Port(Swostab):
     def _load_tab_data(self):
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
@@ -51,9 +53,15 @@ class Mikrotik_Port(Swostab):
 
     def configure(self, port_id, **kwargs):
         if port_id < 1 or port_id > self.port_count:
-            return
+            raise ValueError(f"port_id is outside 1..{self.port_count}")
 
-        self.parsed_data["name"][port_id-1] = kwargs.get("name", None)
+        port_name = kwargs.get("name", None)
+        if port_name:
+            if len(port_name) <= PORT_NAME_LENGTH_MAX:
+                self.parsed_data["name"][port_id-1] = port_name
+            else:
+                raise ValueError(f"port name length is greater than {PORT_NAME_LENGTH_MAX}")
+
         self.parsed_data["enabled"][port_id-1] = 1 if kwargs.get("enabled", 0) else 0
         self.parsed_data["autoneg"][port_id-1] = 1 if kwargs.get("autoneg", 1) else 0
         self.parsed_data["duplex"][port_id-1] = 1 if kwargs.get("duplex", 1) else 0

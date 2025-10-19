@@ -19,15 +19,12 @@ class Mikrotik_Rstp(Swostab):
 
     def on_port(self, port_id, rstp_mode):
         if port_id < 1 or port_id > self.port_count:
-            return False
+            raise ValueError(f"port_id is outside 1..{self.port_count}")
 
         if rstp_mode:
             self._parsed_data["ena"][port_id-1] = 1
         else:
             self._parsed_data["ena"][port_id-1] = 0
-
-        return True
-
 
     def save(self):
         self._update_data("ena", utils.encode_listofflags(self._parsed_data["ena"], 8))

@@ -9,6 +9,8 @@ from mikrotik_swos.swostab import Swostab
 # [{vid:0x64,nm:'696e7465726e6574',piso:0x01,lrn:0x01,mrr:0x00,igmp:0x00,mbr:0x01c20000},{vid:0x044c,nm:'70726976617465',piso:0x01,lrn:0x01,mrr:0x00,igmp:0x00,mbr:0xc00003},{vid:0x044d,nm:'7075626c6963',piso:0x01,lrn:0x01,mrr:0x00,igmp:0x00,mbr:0xc00004},{vid:0x044e,nm:'736670',piso:0x01,lrn:0x01,mrr:0x00,igmp:0x00,mbr:0x01c20000}]
 PAGE = "/vlan.b"
 
+VLAN_NAME_LENGTH_MAX = 16
+
 
 class Mikrotik_Vlans(Swostab):
     def _load_tab_data(self):
@@ -39,17 +41,22 @@ class Mikrotik_Vlans(Swostab):
             self._parsed_data[vlan]["mbr"] = [0] * self.port_count
 
     def add_port(self, vlan_id, port_id):
-        if port_id <= 0 or port_id > self.port_count:
-            return False
+        if port_id < 1 or port_id > self.port_count:
+            raise ValueError(f"port_id is outside 1..{self.port_count}")
 
         _vlan_config = self.get(vlan_id)
-        if _vlan_config is None:
-            return False
+        if _vlan_config:
+            _vlan_config["mbr"][port_id-1] = 1
+            return
 
-        _vlan_config["mbr"][port_id-1] = 1
-        return True
+        raise ValueError(f"vlan id {vlan_id} is not configured on the switch")
+
 
     def add(self, vlan_id, **kwargs):
+        vlan_name = kwargs.get("name", str(vlan_id))
+        if len(vlan_name) > VLAN_NAME_LENGTH_MAX:
+            raise ValueError(f"vlan name length is greater than {VLAN_NAME_LENGTH_MAX}")
+
         _vlan_config = self.get(vlan_id)
         if _vlan_config is None:
             _vlan_config = {
@@ -64,12 +71,12 @@ class Mikrotik_Vlans(Swostab):
             self._data.append(_vlan_config)
             self._parsed_data[vlan_id] = _vlan_config
 
-        _vlan_config["nm"] = kwargs.get("name", str(vlan_id))
+        _vlan_config["nm"] = vlan_name
         _vlan_config["piso"] = kwargs.get("port_isolation", None)
         _vlan_config["lrn"] = kwargs.get("learning", None)
         _vlan_config["mrr"] = kwargs.get("mirror", None)
         _vlan_config["igmp"] = kwargs.get("igmp_snooping", None)
-        
+
     def remove(self, vlan_id):
         vlan = self._parsed_data.pop(vlan_id, None)
         if vlan:

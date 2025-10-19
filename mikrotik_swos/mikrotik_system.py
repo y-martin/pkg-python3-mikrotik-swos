@@ -17,6 +17,8 @@ IGMP_VERSION = {
     "v3": "0x01"
 }
 
+SWITCH_ID_LENGTH_MAX = 16
+
 
 class Mikrotik_System(Swostab):
     def _load_tab_data(self):
@@ -24,6 +26,13 @@ class Mikrotik_System(Swostab):
 
     # todo: iptp
     def set(self, **kwargs):
+        switch_id = kwargs.get("identity", None)
+        if switch_id:
+            if len(switch_id) <= SWITCH_ID_LENGTH_MAX:
+                self._update_data("id", utils.encode_string(switch_id))
+            else:
+                raise ValueError(f"switch identity length is greater than {SWITCH_ID_LENGTH_MAX}")
+
         if kwargs.get("allow_from_net4", None):
             # mikrotik switch expect a valid network/mask combination => 10.31.0.0/15 is wrong
             tokens = str(ipaddress.IPv4Network(kwargs.get("allow_from_net4"), strict=False)).split("/")
@@ -41,7 +50,6 @@ class Mikrotik_System(Swostab):
         self._update_data("igfl", utils.encode_listofflags(kwargs.get("igmp_fast_leave", None), 8))
         self._update_data("dtrp", utils.encode_listofflags(kwargs.get("dhcp_trusted_port", None), 8))
         self._update_data("ainf", utils.encode_checkbox(kwargs.get("dhcp_add_information_option", None)))
-        self._update_data("id", utils.encode_string(kwargs.get("identity", None)))
 
         # 2.16 additions
         if self.version >= 2.16:
@@ -65,7 +73,7 @@ class Mikrotik_System(Swostab):
             self._update_data("pdsc", utils.encode_listofflags(discovery_protocol, 8))
         else:
             self._update_data("dsc", utils.encode_checkbox(kwargs.get("mikrotik_discovery_protocol", None)))
-        
+
         return self._save(PAGE)
 
     def show(self):

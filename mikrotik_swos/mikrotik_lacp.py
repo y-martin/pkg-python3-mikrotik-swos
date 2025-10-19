@@ -22,10 +22,11 @@ class Mikrotik_Lacp(Swostab):
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
 
     def port_lacp_mode(self, port_id, mode, group_id=None):
-        if mode not in LAG_MODE:
-            return False
-
         if port_id < 1 or port_id > self.port_count:
+            raise ValueError(f"port_id is outside 1..{self.port_count}")
+
+        if mode not in LAG_MODE:
+            raise ValueError(f"lacp mode is not in supported list {LAG_MODE}")
             return False
 
         _mode = LAG_MODE[mode]
@@ -33,7 +34,6 @@ class Mikrotik_Lacp(Swostab):
             self._update_data("sgrp", utils.hex_str_with_pad(group_id, pad=2), port_id-1)
         
         self._update_data("mode", _mode, port_id-1)
-        return True
 
     def save(self):
         return self._save(PAGE)

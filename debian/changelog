@@ -1,3 +1,11 @@
+python3-mikrotik-swos (0.17-1) stable; urgency=medium
+
+  * raise ValueError instead when method parameters are invalid
+  * check port, vlan and switch id length
+  * fix "mikrotik_port_isolation.show() missing the last one"
+
+ -- Yannick Martin <yannick.martin@okazoo.eu>  Sun, 19 Oct 2025 14:06:44 +0200
+
 python3-mikrotik-swos (0.16-1) stable; urgency=medium
 
   * feat: snmp, add get_vlans()
