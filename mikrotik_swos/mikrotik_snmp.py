@@ -15,6 +15,13 @@ class Mikrotik_Snmp(Swostab):
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
 
     def set(self, **kwargs):
+        """
+        enable              true / false
+        community           community name
+        contact_info        contact
+        location            device location
+
+        """
         self._update_data("en", utils.encode_checkbox(kwargs.get("enable", None)))
         self._update_data("com", utils.encode_string(kwargs.get("community", None)))
         self._update_data("ci", utils.encode_string(kwargs.get("contact_info", None)))

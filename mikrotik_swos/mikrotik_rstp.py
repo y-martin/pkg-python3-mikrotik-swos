@@ -18,6 +18,12 @@ class Mikrotik_Rstp(Swostab):
         }
 
     def on_port(self, port_id, rstp_mode):
+        """
+        port_id             port index
+        rstp_mode           true (enable) / false (disable)
+
+        """
+        
         if port_id < 1 or port_id > self.port_count:
             raise ValueError(f"port_id is outside 1..{self.port_count}")
 

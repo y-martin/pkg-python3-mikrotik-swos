@@ -41,6 +41,12 @@ class Mikrotik_Vlans(Swostab):
             self._parsed_data[vlan]["mbr"] = [0] * self.port_count
 
     def add_port(self, vlan_id, port_id):
+        """
+        vlan_id             vlan id
+        port_id             port index
+
+        """
+
         if port_id < 1 or port_id > self.port_count:
             raise ValueError(f"port_id is outside 1..{self.port_count}")
 
@@ -53,6 +59,15 @@ class Mikrotik_Vlans(Swostab):
 
 
     def add(self, vlan_id, **kwargs):
+        """
+        vlan_id             vlan id
+        name                vlan name
+        port_isolation      true / false
+        learning            true / false
+        mirror              true / false
+        igmp_snooping       true / false
+
+        """
         vlan_name = kwargs.get("name", str(vlan_id))
         if len(vlan_name) > VLAN_NAME_LENGTH_MAX:
             raise ValueError(f"vlan name length is greater than {VLAN_NAME_LENGTH_MAX}")

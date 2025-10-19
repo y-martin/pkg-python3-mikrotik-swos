@@ -22,6 +22,13 @@ class Mikrotik_Lacp(Swostab):
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
 
     def port_lacp_mode(self, port_id, mode, group_id=None):
+        """
+        port_id             port index
+        mode                passive / active / static
+        group_id            id (static mode)
+
+        """
+
         if port_id < 1 or port_id > self.port_count:
             raise ValueError(f"port_id is outside 1..{self.port_count}")
 

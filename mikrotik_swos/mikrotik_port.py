@@ -52,6 +52,18 @@ class Mikrotik_Port(Swostab):
             self.parsed_data["sfp_rate"] = self._data["sfpr"].copy()
 
     def configure(self, port_id, **kwargs):
+        """
+        port_id             port index
+        name                port name
+        enabled             1 (enable) / 0 (disable)
+        autoneg             1 (enable) / 0 (disable)
+        duplex              1 (enable) / 0 (disable)
+        tx_flow_control     1 (enable) / 0 (disable)
+        rx_flow_control     1 (enable) / 0 (disable)
+        speed               10 / 100 / 1000 / 2500 / 10000
+        sfp_rate            low / high
+
+        """
         if port_id < 1 or port_id > self.port_count:
             raise ValueError(f"port_id is outside 1..{self.port_count}")
 

@@ -35,6 +35,12 @@ class Mikrotik_Forwarding(Swostab):
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
 
     def port_isolation(self, port_id, port_list = []):
+        """
+        port_id             port index
+        port_list           index of ports or "any"
+
+        """
+
         if port_id < 1 or port_id > self.port_count:
             raise ValueError(f"port_id is outside 1..{self.port_count}")
 
@@ -54,6 +60,14 @@ class Mikrotik_Forwarding(Swostab):
         return True
 
     def port_vlan_config(self, port_id, mode = None, receive_mode = None, default_vlan_id = None, force_vlan_id = None):
+        """
+        port_id             port index
+        mode                disabled / optional / enabled / strict
+        receive_mode        any / only tagged / only untagged
+        default_vlan_id     vlan_id
+        force_vlan_id       true / false
+
+        """
         if port_id < 1 or port_id > self.port_count:
             raise ValueError(f"port_id is outside 1..{self.port_count}")
 
@@ -93,10 +107,10 @@ class Mikrotik_Forwarding(Swostab):
         _fvid = utils.decode_listofflags(self._data["fvid"], self.port_count)
         for i in range(0, self.port_count):
             # indexed fpX
-            print("port {}:".format(i))
-            print("  isolation table: {}".format(utils.decode_listofflags(self._data["fp{}".format(i)], self.port_count)))
-            print("  vlan mode: {}".format(vlan_mode_str[self._data["vlan"][i-1]]))
-            print("  vlan receive mode: {}".format(vlan_receive_mode_str[self._data["vlni"][i-1]]))
-            print("  default vlan id: {}".format(int(self._data["dvid"][i-1], 16)))
-            print("  force vlan id: {}".format(_fvid[i-1]))
+            print("port {}:".format(i+1))
+            print("  isolation table: {}".format(utils.decode_listofflags(self._data["fp{}".format(i+1)], self.port_count)))
+            print("  vlan mode: {}".format(vlan_mode_str[self._data["vlan"][i]]))
+            print("  vlan receive mode: {}".format(vlan_receive_mode_str[self._data["vlni"][i]]))
+            print("  default vlan id: {}".format(int(self._data["dvid"][i], 16)))
+            print("  force to vlan id: {}".format(_fvid[i]))
         print("")

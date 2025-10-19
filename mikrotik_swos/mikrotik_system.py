@@ -26,6 +26,23 @@ class Mikrotik_System(Swostab):
 
     # todo: iptp
     def set(self, **kwargs):
+        """
+        identity                      switch id
+        allow_from_net4               allowed IPv4 subnet (like 10.0.0.0/8)
+        allow_from_vlan               vlan id
+        allow_from_port               list of port index
+        watchdog                      true / false
+        independant_vlan_lookup       true / false
+        igmp_snooping                 true / false
+        igmp_fast_leave               list of flags (port length)
+        igmp_querier                  true / false (if igmp snooping enabled)
+        igmp_version                  v2 / v3 
+        dhcp_trusted_port             list of flags (port length)
+        dhcp_add_information_option   true / false
+        mikrotik_discovery_protocol   list of flags (port length)
+        
+        """
+
         switch_id = kwargs.get("identity", None)
         if switch_id:
             if len(switch_id) <= SWITCH_ID_LENGTH_MAX:
