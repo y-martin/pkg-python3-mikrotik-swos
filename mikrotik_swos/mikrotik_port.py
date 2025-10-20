@@ -68,7 +68,7 @@ class Mikrotik_Port(Swostab):
             raise ValueError(f"port_id is outside 1..{self.port_count}")
 
         port_name = kwargs.get("name", None)
-        if port_name:
+        if port_name is not None:
             if len(port_name) <= PORT_NAME_LENGTH_MAX:
                 self.parsed_data["name"][port_id-1] = port_name
             else:

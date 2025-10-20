@@ -46,7 +46,7 @@ class Mikrotik_Poe(Swostab):
 
     def configure_port(self, port_id, **kwargs):
         """
-        port_id             port index
+        port_id             port index 1..port_count
         priority            priority 1..8
         lldp_enabled        1 (enable) / 0 (disable)
         poe_output          on / off / auto
@@ -56,18 +56,18 @@ class Mikrotik_Poe(Swostab):
         if port_id < 1 or port_id > self.port_count:
             raise ValueError(f"port_id is outside 1..{self.port_count}")
 
-        priority = kwargs.get("priority")
-        if priority:
+        priority = kwargs.get("priority", None)
+        if priority is not None:
             if priority < POE_MIN_PRIORITY or priority > POE_MAX_PRIORITY:
                 raise ValueError(f"priority is outside {POE_MIN_PRIORITY}..{POE_MAX_PRIORITY} range")
 
-            self._update_data("prio", utils.hex_str_with_pad(priority-1, pad=2), port_id)
+            self._update_data("prio", utils.hex_str_with_pad(priority-1, pad=2), port_id-1)
             
         self.parsed_data["lldp"][port_id-1] = 1 if kwargs.get("lldp_enabled", 0) else 0
-
-        self._update_data("poe", POE_OUT_MODE.get(kwargs.get("poe_output"), "0x02"), port_id)
-        self._update_data("lvl", VOLTAGE_LEVEL.get(kwargs.get("voltage_level"), "0x00"), port_id)
         self._update_data("lldp", utils.encode_listofflags(self.parsed_data["lldp"], 8))
+
+        self._update_data("poe", POE_OUT_MODE.get(kwargs.get("poe_output"), "0x02"), port_id-1)
+        self._update_data("lvl", VOLTAGE_LEVEL.get(kwargs.get("voltage_level"), "0x00"), port_id-1)
 
     def save(self):
         return self._save(PAGE)

@@ -1,3 +1,13 @@
+python3-mikrotik-swos (0.20-1) stable; urgency=medium
+
+  * mikrotik_system: explicit None check for switch id
+  * mikrotik_port: explicit None check for port_name
+  * mikrotik_poe:
+      - explicit None check for priority
+      - fix in configure_port() port_id handling
+
+ -- Yannick Martin <yannick.martin@okazoo.eu>  Mon, 20 Oct 2025 09:11:31 +0200
+
 python3-mikrotik-swos (0.19-1) stable; urgency=medium
 
   * add logging support to help debug

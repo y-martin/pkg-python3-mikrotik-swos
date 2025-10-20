@@ -44,7 +44,7 @@ class Mikrotik_System(Swostab):
         """
 
         switch_id = kwargs.get("identity", None)
-        if switch_id:
+        if switch_id is not None:
             if len(switch_id) <= SWITCH_ID_LENGTH_MAX:
                 self._update_data("id", utils.encode_string(switch_id))
             else:
