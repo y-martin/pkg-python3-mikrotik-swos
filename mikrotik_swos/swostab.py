@@ -1,16 +1,24 @@
 #!/usr/bin/env python3
 
 
+import logging
 import requests
 from mikrotik_swos import utils
 
 
 class Swostab:
     def _get(self, page):
-        return requests.get(self._url + page, auth=self._auth)
+        ret = requests.get(self._url + page, auth=self._auth)
+        logging.debug(f"--- got headers: {ret.headers}")
+        logging.debug(f"--- got data: {ret.text}")
+        return ret
 
     def _post(self, page, data):
-        return requests.post(self._url + page, auth=self._auth, data=data)
+        logging.debug(f"--- posted: {data}")
+        ret = requests.post(self._url + page, auth=self._auth, data=data)
+        logging.debug(f"--- got headers: {ret.headers}")
+        logging.debug(f"--- got data: {ret.text}")
+        return ret
 
     def _update_data(self, field, value = None, field_index = None):
         if value is None:
