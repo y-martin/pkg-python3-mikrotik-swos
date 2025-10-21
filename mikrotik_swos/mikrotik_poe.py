@@ -41,21 +41,22 @@ class Mikrotik_Poe(Swostab):
     def _load_tab_data(self):
         self._page = PAGE
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
+        self.port_poe_count = len(self._data["poe"])
         self.parsed_data = {
-            "lldp": utils.decode_listofflags(self._data["lldp"], self.port_count)
+            "lldp": utils.decode_listofflags(self._data["lldp"], self.port_poe_count)
         }
 
     def configure_port(self, port_id, **kwargs):
         """
-        port_id             port index 1..port_count
+        port_id             port index 1..port_poe_count
         priority            priority 1..8
         lldp_enabled        1 (enable) / 0 (disable)
         poe_output          on / off / auto
         voltage_level       auto / low / high
 
         """
-        if port_id < 1 or port_id > self.port_count:
-            raise ValueError(f"port_id is outside 1..{self.port_count}")
+        if port_id < 1 or port_id > self.port_poe_count:
+            raise ValueError(f"port_id is outside 1..{self.port_poe_count}")
 
         priority = kwargs.get("priority", None)
         if priority is not None:
@@ -77,7 +78,7 @@ class Mikrotik_Poe(Swostab):
 
         print("poe tab")
 
-        for i in range(0, self.port_count):
+        for i in range(0, self.port_poe_count):
             # indexed fpX
             print(f"port {i+1}")
             print(f"  poe out: {poe_out_mode_str.get(self._data['poe'][i], 'unknown')}")
