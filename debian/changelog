@@ -1,3 +1,12 @@
+python3-mikrotik-swos (0.21-1) stable; urgency=medium
+
+  * mikrotik_system: replace list of flags with list of port index
+  * fix: poe capable port could be different than port count
+  * factorize dummy save method
+  * add save method to _snmp and _system module
+
+ -- Yannick Martin <yannick.martin@okazoo.eu>  Tue, 21 Oct 2025 08:42:14 +0200
+
 python3-mikrotik-swos (0.20-1) stable; urgency=medium
 
   * mikrotik_system: explicit None check for switch id
