@@ -35,12 +35,12 @@ class Mikrotik_System(Swostab):
         watchdog                      true / false
         independant_vlan_lookup       true / false
         igmp_snooping                 true / false
-        igmp_fast_leave               list of flags (port length)
+        igmp_fast_leave               list of port index
         igmp_querier                  true / false (if igmp snooping enabled)
         igmp_version                  v2 / v3 
-        dhcp_trusted_port             list of flags (port length)
+        dhcp_trusted_port             list of port index
         dhcp_add_information_option   true / false
-        mikrotik_discovery_protocol   list of flags (port length)
+        mikrotik_discovery_protocol   list of port index
         
         """
 
@@ -50,6 +50,10 @@ class Mikrotik_System(Swostab):
                 self._update_data("id", utils.encode_string(switch_id))
             else:
                 raise ValueError(f"switch identity length is greater than {SWITCH_ID_LENGTH_MAX}")
+
+        allow_from_port = utils.ports_to_flag_list(kwargs.get("allow_from_port", None), self.port_count)
+        igmp_fast_leave = utils.ports_to_flag_list(kwargs.get("igmp_fast_leave", None), self.port_count)
+        dhcp_trusted_port = utils.ports_to_flag_list(kwargs.get("dhcp_trusted_port", None), self.port_count)
 
         if kwargs.get("allow_from_net4", None):
             # mikrotik switch expect a valid network/mask combination => 10.31.0.0/15 is wrong
@@ -61,12 +65,12 @@ class Mikrotik_System(Swostab):
                 self._update_data("allm", utils.hex_str_with_pad(32, pad=2))
         if kwargs.get("allow_from_vlan", None):
             self._update_data("avln", utils.hex_str_with_pad(int(kwargs.get("allow_from_vlan")), 4))
-        self._update_data("allp", utils.encode_listofflags(kwargs.get("allow_from_port", None), 8))
+        self._update_data("allp", utils.encode_listofflags(allow_from_port, 8))
         self._update_data("wdt", utils.encode_checkbox(kwargs.get("watchdog", None)))
         self._update_data("ivl", utils.encode_checkbox(kwargs.get("independant_vlan_lookup", None)))
         self._update_data("igmp", utils.encode_checkbox(kwargs.get("igmp_snooping", None)))
-        self._update_data("igfl", utils.encode_listofflags(kwargs.get("igmp_fast_leave", None), 8))
-        self._update_data("dtrp", utils.encode_listofflags(kwargs.get("dhcp_trusted_port", None), 8))
+        self._update_data("igfl", utils.encode_listofflags(igmp_fast_leave, 8))
+        self._update_data("dtrp", utils.encode_listofflags(dhcp_trusted_port, 8))
         self._update_data("ainf", utils.encode_checkbox(kwargs.get("dhcp_add_information_option", None)))
 
         # 2.16 additions
@@ -82,11 +86,14 @@ class Mikrotik_System(Swostab):
 
         # 2.17 additions
         if self.version >= 2.17:
-            discovery_protocol = kwargs.get("mikrotik_discovery_protocol", None)
-            if (isinstance(discovery_protocol, bool) and not discovery_protocol) or discovery_protocol == []:
-               discovery_protocol = [0] * self.port_count
-            if isinstance(discovery_protocol, bool) and discovery_protocol:
-               discovery_protocol = [1] * self.port_count
+            _discovery_protocol = kwargs.get("mikrotik_discovery_protocol", None)
+            if isinstance(_discovery_protocol, bool):
+                if _discovery_protocol:
+                    discovery_protocol = [1] * self.port_count
+                else:
+                    discovery_protocol = [0] * self.port_count
+            else:
+                discovery_protocol = utils.ports_to_flag_list(_discovery_protocol, self.port_count)
 
             self._update_data("pdsc", utils.encode_listofflags(discovery_protocol, 8))
         else:
