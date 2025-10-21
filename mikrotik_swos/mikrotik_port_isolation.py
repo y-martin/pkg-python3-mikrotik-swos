@@ -32,6 +32,7 @@ VLAN_RECEIVE_MODE = {
 
 class Mikrotik_Forwarding(Swostab):
     def _load_tab_data(self):
+        self._page = PAGE
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
 
     def port_isolation(self, port_id, port_list = []):
@@ -93,9 +94,6 @@ class Mikrotik_Forwarding(Swostab):
             self._update_data("fvid", utils.encode_listofflags(_fvid, 8))
 
         return True
-
-    def save(self):
-        return self._save(PAGE)
 
     def show(self):
         vlan_mode_str = {v: k for k, v in VLAN_MODE.items()}

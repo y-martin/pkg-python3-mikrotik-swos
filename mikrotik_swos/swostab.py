@@ -65,8 +65,11 @@ class Swostab:
     def _load_tab_data(self):
         raise Exception("not implemented")
 
-    def _save(self, page):
+    def save(self):
+        return self._save()
+
+    def _save(self):
         if self._data_changed:
-            return self._post(page, utils.json_to_mikrotik(self._data)).ok
+            return self._post(self._page, utils.json_to_mikrotik(self._data)).ok
 
         return False

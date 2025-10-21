@@ -33,6 +33,7 @@ PORT_NAME_LENGTH_MAX = 16
 
 class Mikrotik_Port(Swostab):
     def _load_tab_data(self):
+        self._page = PAGE
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
         self.parsed_data = {
             "name": [],
@@ -99,7 +100,7 @@ class Mikrotik_Port(Swostab):
             for i in range(0, self.port_count):
                 self._update_data("sfpr", self.parsed_data["sfp_rate"][i], i)
 
-        return self._save(PAGE)
+        return self._save()
 
     def show(self):
         port_speed_mb_str = {v: k for k, v in PORT_SPEED_MB.items()}

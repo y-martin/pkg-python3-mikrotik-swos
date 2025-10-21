@@ -39,6 +39,7 @@ POE_MAX_PRIORITY = 8
 
 class Mikrotik_Poe(Swostab):
     def _load_tab_data(self):
+        self._page = PAGE
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
         self.parsed_data = {
             "lldp": utils.decode_listofflags(self._data["lldp"], self.port_count)
@@ -68,9 +69,6 @@ class Mikrotik_Poe(Swostab):
 
         self._update_data("poe", POE_OUT_MODE.get(kwargs.get("poe_output"), "0x02"), port_id-1)
         self._update_data("lvl", VOLTAGE_LEVEL.get(kwargs.get("voltage_level"), "0x00"), port_id-1)
-
-    def save(self):
-        return self._save(PAGE)
 
     def show(self):
         poe_out_mode_str = {v: k for k, v in POE_OUT_MODE.items()}

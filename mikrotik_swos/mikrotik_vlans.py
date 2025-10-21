@@ -14,6 +14,7 @@ VLAN_NAME_LENGTH_MAX = 16
 
 class Mikrotik_Vlans(Swostab):
     def _load_tab_data(self):
+        self._page = PAGE
         self._parsed_data = {}
 
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
@@ -111,7 +112,7 @@ class Mikrotik_Vlans(Swostab):
                 self._update_data(i, utils.encode_checkbox(self._parsed_data[vlan_id][k]), k)
             i += 1
 
-        return self._save(PAGE)
+        return self._save()
 
     def show(self):
         print("vlan tab")

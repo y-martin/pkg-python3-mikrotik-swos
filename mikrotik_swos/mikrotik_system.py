@@ -22,6 +22,7 @@ SWITCH_ID_LENGTH_MAX = 16
 
 class Mikrotik_System(Swostab):
     def _load_tab_data(self):
+        self._page = PAGE
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
 
     # todo: iptp
@@ -90,8 +91,6 @@ class Mikrotik_System(Swostab):
             self._update_data("pdsc", utils.encode_listofflags(discovery_protocol, 8))
         else:
             self._update_data("dsc", utils.encode_checkbox(kwargs.get("mikrotik_discovery_protocol", None)))
-
-        return self._save(PAGE)
 
     def show(self):
         print("system tab")

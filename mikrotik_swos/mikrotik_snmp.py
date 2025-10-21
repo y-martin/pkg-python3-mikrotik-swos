@@ -12,6 +12,7 @@ PAGE = "/snmp.b"
 
 class Mikrotik_Snmp(Swostab):
     def _load_tab_data(self):
+        self._page = PAGE
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
 
     def set(self, **kwargs):
@@ -26,7 +27,6 @@ class Mikrotik_Snmp(Swostab):
         self._update_data("com", utils.encode_string(kwargs.get("community", None)))
         self._update_data("ci", utils.encode_string(kwargs.get("contact_info", None)))
         self._update_data("loc", utils.encode_string(kwargs.get("location", None)))
-        return self._save(PAGE)
 
     def show(self):
         print("snmp tab")

@@ -19,6 +19,7 @@ LAG_MODE = {
 
 class Mikrotik_Lacp(Swostab):
     def _load_tab_data(self):
+        self._page = PAGE
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
 
     def port_lacp_mode(self, port_id, mode, group_id=None):
@@ -41,9 +42,6 @@ class Mikrotik_Lacp(Swostab):
             self._update_data("sgrp", utils.hex_str_with_pad(group_id, pad=2), port_id-1)
         
         self._update_data("mode", _mode, port_id-1)
-
-    def save(self):
-        return self._save(PAGE)
 
     def show(self):
         lag_mode_str = {v: k for k, v in LAG_MODE.items()}

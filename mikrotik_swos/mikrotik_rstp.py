@@ -12,6 +12,7 @@ PAGE = "/rstp.b"
 
 class Mikrotik_Rstp(Swostab):
     def _load_tab_data(self):
+        self._page = PAGE
         self._data = utils.mikrotik_to_json(self._get(PAGE).text)
         self._parsed_data = {
             "ena": utils.decode_listofflags(self._data["ena"], self.port_count)
@@ -34,7 +35,7 @@ class Mikrotik_Rstp(Swostab):
 
     def save(self):
         self._update_data("ena", utils.encode_listofflags(self._parsed_data["ena"], 8))
-        return self._save(PAGE)
+        return self._save()
 
     def show(self):
         print("rstp tab")
