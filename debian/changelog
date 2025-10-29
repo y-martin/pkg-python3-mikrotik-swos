@@ -1,3 +1,9 @@
+python3-mikrotik-swos (0.22-1) stable; urgency=medium
+
+  * mikrotik_vlan: mimic mbr field vlan hex encoding
+
+ -- Yannick Martin <yannick.martin@okazoo.eu>  Wed, 29 Oct 2025 09:37:51 +0100
+
 python3-mikrotik-swos (0.21-1) stable; urgency=medium
 
   * mikrotik_system: replace list of flags with list of port index

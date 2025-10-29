@@ -34,7 +34,7 @@ def encode_string(s):
 def decode_listofflags(s, zfill=0):
     flags = []
 
-    if len(s) == 0:
+    if s is None or len(s) == 0:
         return flags
 
     # list is reversed (example port1 is last item)
@@ -48,6 +48,14 @@ def decode_listofflags(s, zfill=0):
         flags.append(int(flags_list[i-1]))
         i -= 1
     return flags
+
+# [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] --> 0x01ffff
+def encode_listofflags_even_len(flags):
+    value = encode_listofflags(flags)
+    if len(value) % 2:
+        value = value.replace("0x", "0x0")
+
+    return value
 
 # [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0] --> 0x1c20005
 # with hex_len_str=8 => 0xc26005 becomes 0x00c26005
