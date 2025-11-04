@@ -26,7 +26,7 @@ class Mikrotik_Lacp(Swostab):
         """
         port_id             port index
         mode                passive / active / static
-        group_id            id (static mode)
+        group_id            id 1..15 (static mode only)
 
         """
 
@@ -35,17 +35,24 @@ class Mikrotik_Lacp(Swostab):
 
         if mode not in LAG_MODE:
             raise ValueError(f"lacp mode is not in supported list {LAG_MODE}")
-            return False
 
-        _mode = LAG_MODE[mode]
-        if mode == "static" and group_id:
+        if group_id is not None and not isinstance(group_id, int):
+            raise ValueError(f"group id is outside 0..15")
+
+        if mode == "static" and isinstance(group_id, int):
+            if group_id < 0 or group_id > 15:
+                raise ValueError(f"group id is outside 0..15")
             self._update_data("sgrp", utils.hex_str_with_pad(group_id, pad=2), port_id-1)
-        
-        self._update_data("mode", _mode, port_id-1)
+
+        self._update_data("mode", LAG_MODE[mode], port_id-1)
 
     def show(self):
         lag_mode_str = {v: k for k, v in LAG_MODE.items()}
 
         print("lacp tab")
-        print("port status {}".format(lag_mode_str[self._data["mode"]]))
+        for i in range(0, self.port_count):
+            if lag_mode_str[self._data["mode"][i]] == "static":
+                print(f"* port {i+1} status {lag_mode_str[self._data['mode'][i]]} group {int(self._data['sgrp'][i], 16)}")
+            else:
+                print(f"* port {i+1} status {lag_mode_str[self._data['mode'][i]]}")
         print("")
