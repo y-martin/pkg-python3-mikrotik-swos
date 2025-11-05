@@ -80,6 +80,9 @@ def test_encode_listofflags():
     flags = [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0]
     assert(utils.encode_listofflags(flags, 8) == "0x00c26005")
 
+    flags = []
+    assert(utils.encode_listofflags(flags, 8) == "0x00000000")
+
 def test_encore_listofflags_even_len():
     flags = [1] * 17 + [0] * 6
     assert(utils.encode_listofflags_even_len(flags) == "0x01ffff")
@@ -92,6 +95,12 @@ def test_encore_listofflags_even_len():
 
     flags = [1] * 26
     assert(utils.encode_listofflags_even_len(flags) == "0x03ffffff")
+
+    flags = []
+    assert(utils.encode_listofflags_even_len(flags) == "0x00")
+
+    flags = None
+    assert(utils.encode_listofflags_even_len(flags) == None)
 
 
 # test_encode_ipv4
