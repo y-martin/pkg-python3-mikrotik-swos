@@ -47,6 +47,8 @@ class Swostab:
         # required to decode some list of boxes
         _link = utils.mikrotik_to_json(resp.text)
         self.port_count = int(_link["prt"], 16)
+        self.sfp_count = int(_link["sfp"], 16)
+        self.sfp_first_port_id = int(_link["sfpo"], 16) + 1
 
         # some feature appears in 2.16
         resp = self._get("/sys.b")

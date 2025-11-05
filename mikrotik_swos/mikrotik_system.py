@@ -65,12 +65,12 @@ class Mikrotik_System(Swostab):
                 self._update_data("allm", utils.hex_str_with_pad(32, pad=2))
         if kwargs.get("allow_from_vlan", None):
             self._update_data("avln", utils.hex_str_with_pad(int(kwargs.get("allow_from_vlan")), 4))
-        self._update_data("allp", utils.encode_listofflags(allow_from_port, 8))
+        self._update_data("allp", utils.encode_listofflags_even_len(allow_from_port))
         self._update_data("wdt", utils.encode_checkbox(kwargs.get("watchdog", None)))
         self._update_data("ivl", utils.encode_checkbox(kwargs.get("independant_vlan_lookup", None)))
         self._update_data("igmp", utils.encode_checkbox(kwargs.get("igmp_snooping", None)))
-        self._update_data("igfl", utils.encode_listofflags(igmp_fast_leave, 8))
-        self._update_data("dtrp", utils.encode_listofflags(dhcp_trusted_port, 8))
+        self._update_data("igfl", utils.encode_listofflags_even_len(igmp_fast_leave))
+        self._update_data("dtrp", utils.encode_listofflags_even_len(dhcp_trusted_port))
         self._update_data("ainf", utils.encode_checkbox(kwargs.get("dhcp_add_information_option", None)))
 
         # 2.16 additions
@@ -95,7 +95,7 @@ class Mikrotik_System(Swostab):
             else:
                 discovery_protocol = utils.ports_to_flag_list(_discovery_protocol, self.port_count)
 
-            self._update_data("pdsc", utils.encode_listofflags(discovery_protocol, 8))
+            self._update_data("pdsc", utils.encode_listofflags_even_len(discovery_protocol))
         else:
             self._update_data("dsc", utils.encode_checkbox(kwargs.get("mikrotik_discovery_protocol", None)))
 
