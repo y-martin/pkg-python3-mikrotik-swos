@@ -88,7 +88,7 @@ class Mikrotik_Port(Swostab):
         if port_id < 1 or port_id > self.port_count:
             raise ValueError(f"port_id is outside 1..{self.port_count}")
 
-        port_name = kwargs.get("name", None)
+        port_name = kwargs.get("name")
         if port_name is not None:
             if len(port_name) <= PORT_NAME_LENGTH_MAX:
                 self.parsed_data["name"][port_id-1] = port_name
@@ -100,16 +100,16 @@ class Mikrotik_Port(Swostab):
         self.parsed_data["duplex"][port_id-1] = 1 if kwargs.get("duplex", 1) else 0
         self.parsed_data["tx_flow_control"][port_id-1] = 1 if kwargs.get("tx_flow_control", 0) else 0
         self.parsed_data["rx_flow_control"][port_id-1] = 1 if kwargs.get("rx_flow_control", 0) else 0
-        if kwargs.get("autoneg", 1) == 0 and kwargs.get("speed", None):
+        if kwargs.get("autoneg", 1) == 0 and kwargs.get("speed"):
             self.parsed_data["speed"][port_id-1] = PORT_SPEED_MB.get(str(kwargs.get("speed")), "0x02")
 
         if self.version >= 2.16:
-            if kwargs.get("sfp_rate", None):
+            if kwargs.get("sfp_rate"):
                 if not self._is_sfp_port(port_id):
                     raise ValueError(f"can't set sfp_rate on non-sfp port")
                 self.parsed_data["sfp_rate"][port_id-1] = PORT_SFP_RATE.get(kwargs.get("sfp_rate"), "0x00")
 
-            if kwargs.get("combo_mode", None):
+            if kwargs.get("combo_mode"):
                 if not self._is_combo_port(port_id):
                     raise ValueError(f"can't set combo_mode on non-combo port")
                 self.parsed_data["combo_mode"][port_id-1] = COMBO_MODE.get(kwargs.get("combo_mode"), "0x00")

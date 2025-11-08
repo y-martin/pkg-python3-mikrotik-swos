@@ -58,7 +58,7 @@ class Mikrotik_Poe(Swostab):
         if port_id < 1 or port_id > self.port_poe_count:
             raise ValueError(f"port_id is outside 1..{self.port_poe_count}")
 
-        priority = kwargs.get("priority", None)
+        priority = kwargs.get("priority")
         if priority is not None:
             if priority < POE_MIN_PRIORITY or priority > POE_MAX_PRIORITY:
                 raise ValueError(f"priority is outside {POE_MIN_PRIORITY}..{POE_MAX_PRIORITY} range")

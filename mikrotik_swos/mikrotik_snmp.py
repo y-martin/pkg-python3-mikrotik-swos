@@ -23,10 +23,10 @@ class Mikrotik_Snmp(Swostab):
         location            device location
 
         """
-        self._update_data("en", utils.encode_checkbox(kwargs.get("enable", None)))
-        self._update_data("com", utils.encode_string(kwargs.get("community", None)))
-        self._update_data("ci", utils.encode_string(kwargs.get("contact_info", None)))
-        self._update_data("loc", utils.encode_string(kwargs.get("location", None)))
+        self._update_data("en", utils.encode_checkbox(kwargs.get("enable")))
+        self._update_data("com", utils.encode_string(kwargs.get("community")))
+        self._update_data("ci", utils.encode_string(kwargs.get("contact_info")))
+        self._update_data("loc", utils.encode_string(kwargs.get("location")))
 
     def show(self):
         print("snmp tab")

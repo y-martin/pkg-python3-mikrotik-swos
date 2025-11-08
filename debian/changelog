@@ -1,3 +1,9 @@
+python3-mikrotik-swos (0.25-1) stable; urgency=medium
+
+  * feat: rstp config
+
+ -- Yannick Martin <yannick.martin@okazoo.eu>  Sat, 08 Nov 2025 16:42:12 +0100
+
 python3-mikrotik-swos (0.24-1) stable; urgency=medium
 
   * fix: encode_listofflags* None and [] handling
