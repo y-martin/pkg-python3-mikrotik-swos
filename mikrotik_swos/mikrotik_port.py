@@ -54,7 +54,7 @@ class Mikrotik_Port(Swostab):
         self.parsed_data["speed"] = self._data["spdc"].copy()
         for i in range(0, self.port_count):
             self.parsed_data["name"].append(utils.decode_string(self._data["nm"][i]))
-            
+
         if self.version >= 2.16:
             self.parsed_data["sfp_rate"] = self._data["sfpr"].copy()
 
@@ -113,13 +113,13 @@ class Mikrotik_Port(Swostab):
                 if not self._is_combo_port(port_id):
                     raise ValueError(f"can't set combo_mode on non-combo port")
                 self.parsed_data["combo_mode"][port_id-1] = COMBO_MODE.get(kwargs.get("combo_mode"), "0x00")
-            
+
     def save(self):
-        self._update_data("en", utils.encode_listofflags_even_len(self.parsed_data["enabled"]))
-        self._update_data("dpxc", utils.encode_listofflags_even_len(self.parsed_data["duplex"]))
-        self._update_data("fctc", utils.encode_listofflags_even_len(self.parsed_data["tx_flow_control"]))
-        self._update_data("fctr", utils.encode_listofflags_even_len(self.parsed_data["rx_flow_control"]))
-        self._update_data("an", utils.encode_listofflags_even_len(self.parsed_data["autoneg"]))
+        self._update_data("en", utils.encode_listofflags(self.parsed_data["enabled"]))
+        self._update_data("dpxc", utils.encode_listofflags(self.parsed_data["duplex"]))
+        self._update_data("fctc", utils.encode_listofflags(self.parsed_data["tx_flow_control"]))
+        self._update_data("fctr", utils.encode_listofflags(self.parsed_data["rx_flow_control"]))
+        self._update_data("an", utils.encode_listofflags(self.parsed_data["autoneg"]))
         for i in range(0, self.port_count):
             self._update_data("nm", utils.encode_string(self.parsed_data["name"][i]), i)
             self._update_data("spdc", self.parsed_data["speed"][i], i)
@@ -135,7 +135,7 @@ class Mikrotik_Port(Swostab):
         port_speed_mb_str = {v: k for k, v in PORT_SPEED_MB.items()}
         combo_mode_str = {v: k for k, v in COMBO_MODE.items()}
         sfp_rate_str = {v: k for k, v in PORT_SFP_RATE.items()}
-        
+
         print("link tab")
         for i in range(0, self.port_count):
             properties = [

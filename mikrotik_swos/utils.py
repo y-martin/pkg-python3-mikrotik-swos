@@ -50,19 +50,7 @@ def decode_listofflags(s, zfill=0):
     return flags
 
 # [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] --> 0x01ffff
-def encode_listofflags_even_len(flags):
-    if not isinstance(flags, list):
-        return None
-    
-    value = encode_listofflags(flags)
-    if len(value) % 2:
-        value = value.replace("0x", "0x0")
-
-    return value
-
-# [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0] --> 0x1c20005
-# with hex_len_str=8 => 0xc26005 becomes 0x00c26005
-def encode_listofflags(flags, hex_len_str=0):
+def encode_listofflags(flags):
     if not isinstance(flags, list):
         return None
 
@@ -71,14 +59,22 @@ def encode_listofflags(flags, hex_len_str=0):
         flags_str = "".join(map(str, flags))[::-1]
     else:
         flags_str = "0"
-    return hex_str_with_pad(int(flags_str, 2), hex_len_str)
+
+    value = hex(int(flags_str, 2))
+    if len(value) % 2:
+        value = value.replace("0x", "0x0")
+
+    return value
 
 # with pad=8 => 0xc26005 becomes 0x00c26005
 def hex_str_with_pad(s, pad=0):
     if s is None:
         return None
 
-    if pad == 0:
+    if isinstance(s, str):
+        s = int(s, 16)
+
+    if pad == 0 or pad is None:
         return hex(s)
     else:
         return '0x{0:0{1}x}'.format(s,pad)
@@ -121,3 +117,13 @@ def ports_to_flag_list(ports, fill=0):
         flag_list[i-1] = 1
 
     return flag_list
+
+# (0x)1234 --> 4
+def hex_value_len(s):
+    if not isinstance(s, str):
+        return None
+
+    if s.startswith("0x"):
+        return len(s)-2
+
+    return len(s)

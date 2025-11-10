@@ -57,7 +57,7 @@ class Mikrotik_Forwarding(Swostab):
                     acl[p-1] = 1
 
         acl[port_id-1] = 0
-        self._update_data("fp{}".format(port_id), utils.encode_listofflags_even_len(acl))
+        self._update_data("fp{}".format(port_id), utils.encode_listofflags(acl))
         return True
 
     def port_vlan_config(self, port_id, mode = None, receive_mode = None, default_vlan_id = None, force_vlan_id = None):
@@ -86,12 +86,13 @@ class Mikrotik_Forwarding(Swostab):
 
         if force_vlan_id is not None:
             _fvid = utils.decode_listofflags(self._data["fvid"], self.port_count)
+
             if force_vlan_id:
                 _fvid[port_id-1] = 1
             else:
                 _fvid[port_id-1] = 0
 
-            self._update_data("fvid", utils.encode_listofflags_even_len(_fvid))
+            self._update_data("fvid", utils.encode_listofflags(_fvid))
 
         return True
 

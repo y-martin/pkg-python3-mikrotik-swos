@@ -73,34 +73,20 @@ def test_decode_listofflags():
     assert(flags == [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0])
 
 
+# test_encode_listofflags
+
 def test_encode_listofflags():
     flags = [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1]
-    assert(utils.encode_listofflags(flags, 8) == "0x03c20007")
+    assert(utils.encode_listofflags(flags) == "0x03c20007")
 
     flags = [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0]
-    assert(utils.encode_listofflags(flags, 8) == "0x00c26005")
+    assert(utils.encode_listofflags(flags) == "0xc26005")
 
     flags = []
-    assert(utils.encode_listofflags(flags, 8) == "0x00000000")
-
-def test_encore_listofflags_even_len():
-    flags = [1] * 17 + [0] * 6
-    assert(utils.encode_listofflags_even_len(flags) == "0x01ffff")
-
-    flags = [1] * 21 + [0] * 5
-    assert(utils.encode_listofflags_even_len(flags) == "0x1fffff")
-
-    flags = [1] * 25 + [0] * 1
-    assert(utils.encode_listofflags_even_len(flags) == "0x01ffffff")
-
-    flags = [1] * 26
-    assert(utils.encode_listofflags_even_len(flags) == "0x03ffffff")
-
-    flags = []
-    assert(utils.encode_listofflags_even_len(flags) == "0x00")
+    assert(utils.encode_listofflags(flags) == "0x00")
 
     flags = None
-    assert(utils.encode_listofflags_even_len(flags) == None)
+    assert(utils.encode_listofflags(flags) == None)
 
 
 # test_encode_ipv4
@@ -133,3 +119,25 @@ def test_ports_to_flag_list():
     assert(utils.ports_to_flag_list([], 2) == [0, 0])
     assert(utils.ports_to_flag_list([4]) == [0, 0, 0, 1])
     assert(utils.ports_to_flag_list([2], 4) == [0, 1, 0, 0])
+
+
+# test_hex_str_with_pad
+def test_hex_str_with_pad():
+    assert(utils.hex_str_with_pad(None) == None)
+    assert(utils.hex_str_with_pad(None, 8) == None)
+    assert(utils.hex_str_with_pad(None, None) == None)
+    assert(utils.hex_str_with_pad("c26005", None) == "0xc26005")
+    assert(utils.hex_str_with_pad("c26005") == "0xc26005")
+    assert(utils.hex_str_with_pad("c26005", 8) == "0x00c26005")
+    assert(utils.hex_str_with_pad(0xc26005) == "0xc26005")
+    assert(utils.hex_str_with_pad(0xc26005, 8) == "0x00c26005")
+
+
+# test_hex_value_len
+def test_hex_value_len():
+    assert(utils.hex_value_len(None) == None)
+    assert(utils.hex_value_len("0") == 1)
+    assert(utils.hex_value_len("0x0000") == 4)
+    assert(utils.hex_value_len("0x000c") == 4)
+    assert(utils.hex_value_len("0x000c000d") == 8)
+    

@@ -25,12 +25,20 @@ class Swostab:
             return
 
         if field_index is not None:
-            if value != self._data[field][field_index]:
+            old_value = self._data[field][field_index]
+            if value.startswith("0x"):
+                value = utils.hex_str_with_pad(value, utils.hex_value_len(old_value))
+            if value != old_value:
+                logging.debug(f"update data ({field}/{field_index}): {old_value} -> {value}")
                 self._data[field][field_index] = value
                 self._data_changed = True
             return
 
-        if value != self._data[field]:
+        old_value = self._data[field]
+        if value.startswith("0x"):
+            value = utils.hex_str_with_pad(value, utils.hex_value_len(old_value))
+        if value != old_value:
+            logging.debug(f"update data ({field}): {old_value} -> {value}")
             self._data[field] = value
             self._data_changed = True
 

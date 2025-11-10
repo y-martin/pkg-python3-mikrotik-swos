@@ -66,7 +66,7 @@ class Mikrotik_Poe(Swostab):
             self._update_data("prio", utils.hex_str_with_pad(priority-1, pad=2), port_id-1)
             
         self.parsed_data["lldp"][port_id-1] = 1 if kwargs.get("lldp_enabled", 0) else 0
-        self._update_data("lldp", utils.encode_listofflags_even_len(self.parsed_data["lldp"]))
+        self._update_data("lldp", utils.encode_listofflags(self.parsed_data["lldp"]))
 
         self._update_data("poe", POE_OUT_MODE.get(kwargs.get("poe_output"), "0x02"), port_id-1)
         self._update_data("lvl", VOLTAGE_LEVEL.get(kwargs.get("voltage_level"), "0x00"), port_id-1)

@@ -107,7 +107,7 @@ class Mikrotik_Vlans(Swostab):
         while i < len(self._data):
             vlan_id = int(self._data[i]['vid'], 16)
             self._update_data(i, utils.encode_string(self._parsed_data[vlan_id]["nm"]), "nm")
-            self._update_data(i, utils.encode_listofflags_even_len(self._parsed_data[vlan_id]["mbr"]), "mbr")
+            self._update_data(i, utils.encode_listofflags(self._parsed_data[vlan_id]["mbr"]), "mbr")
             for k in ["piso", "lrn", "mrr", "igmp"]:
                 self._update_data(i, utils.encode_checkbox(self._parsed_data[vlan_id][k]), k)
             i += 1
