@@ -33,9 +33,9 @@ class Mikrotik_Rstp(Swostab):
         else:
             self._parsed_data["ena"][port_id-1] = 0
 
-    def save(self):
+    def save(self, dry_run=False):
         self._update_data("ena", utils.encode_listofflags(self._parsed_data["ena"]))
-        return self._save()
+        return self._save(dry_run)
 
     def show(self):
         print("rstp tab")

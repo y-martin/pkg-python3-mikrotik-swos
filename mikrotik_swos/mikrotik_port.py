@@ -114,7 +114,7 @@ class Mikrotik_Port(Swostab):
                     raise ValueError(f"can't set combo_mode on non-combo port")
                 self.parsed_data["combo_mode"][port_id-1] = COMBO_MODE.get(kwargs.get("combo_mode"), "0x00")
 
-    def save(self):
+    def save(self, dry_run=False):
         self._update_data("en", utils.encode_listofflags(self.parsed_data["enabled"]))
         self._update_data("dpxc", utils.encode_listofflags(self.parsed_data["duplex"]))
         self._update_data("fctc", utils.encode_listofflags(self.parsed_data["tx_flow_control"]))
@@ -129,7 +129,7 @@ class Mikrotik_Port(Swostab):
                 self._update_data("sfpr", self.parsed_data["sfp_rate"][i], i)
                 self._update_data("cm", self.parsed_data["combo_mode"][i], i)
 
-        return self._save()
+        return self._save(dry_run)
 
     def show(self):
         port_speed_mb_str = {v: k for k, v in PORT_SPEED_MB.items()}

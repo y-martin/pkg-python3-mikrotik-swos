@@ -102,7 +102,7 @@ class Mikrotik_Vlans(Swostab):
 
         return False
 
-    def save(self):
+    def save(self, dry_run=False):
         i = 0
         while i < len(self._data):
             vlan_id = int(self._data[i]['vid'], 16)
@@ -112,7 +112,7 @@ class Mikrotik_Vlans(Swostab):
                 self._update_data(i, utils.encode_checkbox(self._parsed_data[vlan_id][k]), k)
             i += 1
 
-        return self._save()
+        return self._save(dry_run)
 
     def show(self):
         print("vlan tab")
