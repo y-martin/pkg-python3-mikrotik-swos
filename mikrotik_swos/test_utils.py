@@ -140,4 +140,9 @@ def test_hex_value_len():
     assert(utils.hex_value_len("0x0000") == 4)
     assert(utils.hex_value_len("0x000c") == 4)
     assert(utils.hex_value_len("0x000c000d") == 8)
-    
+
+
+# test_decode_swos_version
+def test_decode_swos_version():
+    assert(utils.decode_swos_version("322e3138") == 2.18)
+    assert(utils.decode_swos_version(utils.encode_string("2.13p")) == 2.13)

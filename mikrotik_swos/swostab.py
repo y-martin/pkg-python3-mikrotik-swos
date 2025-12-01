@@ -64,7 +64,7 @@ class Swostab:
 
         # required to decode some list of boxes
         _sys = utils.mikrotik_to_json(resp.text)
-        self.version = float(utils.decode_string(_sys["ver"]))
+        self.version = utils.decode_swos_version(_sys["ver"])
 
         self._load_tab_data()
         self._data_changed = False

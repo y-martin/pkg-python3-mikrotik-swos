@@ -127,3 +127,9 @@ def hex_value_len(s):
         return len(s)-2
 
     return len(s)
+
+# decode version
+#   (0x)322e3138 --> 2.18
+#   strip "p" (for primary) : 2.16p -> 2.16
+def decode_swos_version(s):
+    return float(decode_string(s).replace("p", ""))
